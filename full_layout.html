@@ -15,7 +15,7 @@
   </div>
 </div>
 <div class="layout layout--col">
-  <span class="label label--inverted">Play Count By Day</span>
+  <span class="label label--inverted">Play Duration By Day</span>
   <div id="chart-123" style="width: 100%"></div>
 </div>
 
@@ -52,6 +52,13 @@
             }
           },
           yAxis: {
+            title: {
+              text: "Hours",
+              style: {
+                fontSize: "16px",
+                color: "#000000"
+              }
+            },
             labels: {
               style: {
                 fontSize: "16px",
@@ -77,7 +84,8 @@
             tickLength: 0,
             gridLineWidth: 1,
             gridLineColor: "#000000",
-            tickPixelInterval: 120
+            tickPixelInterval: 120,
+            tickInterval: 2,
           }
         }
       });

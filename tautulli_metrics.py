@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from pprint import pprint
 
@@ -64,12 +64,15 @@ def parse_play_data(response_data):
 
 def get_plays_graph_data():
     request = get_tautilli_endpoint(
-        "get_plays_by_date", [("time_range", "30"), ("y_axis", "plays")]
+        "get_plays_by_date", [("time_range", "30"), ("y_axis", "duration")]
     )
     graph_data = requests.get(request).json()["response"]["data"]
     result = []
     for i, date in enumerate(graph_data["categories"]):
-        row = [date] + [series["data"][i] for series in graph_data["series"]]
+        # row = [date] + [series["data"][i] for series in graph_data["series"]]
+        row = [date] + [
+            int(series["data"][i]) / 3600 for series in graph_data["series"]
+        ]  # Convert seconds data into hours
         result.append(row)
     summed_without_music = [
         [date, series_data[0] + series_data[1]] for date, *series_data in result
