@@ -65,15 +65,26 @@ def parse_play_data(response_data):
 def get_stats():
     movies_url = get_tautilli_endpoint(
         "get_home_stats",
-        [("time_range", 30), ("stats_type", "plays"), ("stat_id", "top_movies")],
+        [
+            ("time_range", 30),
+            ("stats_type", "plays"),
+            ("stat_id", "top_movies"),
+            ("stats_count", "5"),
+        ],
     )
     result_json = requests.get(movies_url).json()["response"]["data"]
     movie_data = parse_play_data(result_json)
     tv_url = get_tautilli_endpoint(
         "get_home_stats",
-        [("time_range", 30), ("stats_type", "plays"), ("stat_id", "top_tv")],
+        [
+            ("time_range", 30),
+            ("stats_type", "plays"),
+            ("stat_id", "top_tv"),
+            ("stats_count", "5"),
+        ],
     )
     result_json = requests.get(tv_url).json()["response"]["data"]
+    pprint(result_json)
     tv_data = parse_play_data(result_json)
     return (movie_data, tv_data)
 
@@ -84,26 +95,21 @@ def get_server_name():
     return name
 
 
-def main():
-    plugin_uuid = "8ee98b0c-ac2c-4c84-b982-ec910583835e"
-    base_url = "https://usetrmnl.com/api/custom_plugins/"
-    url = base_url + plugin_uuid
-
-    server_name = get_server_name()
-    movie_data, tv_data = get_stats()
-
-    movie_html = ""
+def build_data_html(data):
+    final_html = ""
     count = 1
-    for item in movie_data:
+    for item in data:
         html = ""
         html += '<div class="item">'
         html += '<div class="meta">'
         html += '<span class="index">' + str(count) + "</span>"
         html += "</div>"
         html += '<div class="content">'
-        html += (
-            '<span class="title">' + item["title"] + " (" + item["year"] + ")</span>"
-        )
+        html += '<span class="title title--small">' + item["title"]
+        if item["year"] != "":
+            html += " (" + item["year"] + ")</span>"
+        else:
+            html += "</span>"
         html += (
             '<span class="description">'
             + item["plays"]
@@ -113,14 +119,27 @@ def main():
         )
         html += "</div>"
         html += "</div>"
-        movie_html += html
+        final_html += html
         count += 1
+    return final_html
+
+
+def main():
+    plugin_uuid = "8ee98b0c-ac2c-4c84-b982-ec910583835e"
+    base_url = "https://usetrmnl.com/api/custom_plugins/"
+    url = base_url + plugin_uuid
+
+    server_name = get_server_name()
+    movie_data, tv_data = get_stats()
+    movie_html = build_data_html(movie_data)
+    tv_html = build_data_html(tv_data)
 
     try:
         variables = {
             "merge_variables": {
                 "server_name": str(server_name),
                 "movies_html": movie_html,
+                "tv_html": tv_html,
             }
         }
         result = requests.post(url, json=variables)

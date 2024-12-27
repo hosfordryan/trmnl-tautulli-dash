@@ -1,12 +1,12 @@
 <div class="layout">
   <div class="columns">
     <div class="column">
-      <div class="markdown gap--large">
-        <span class="title">{{ server_name }} Metrics</span>
-      </div>
-      <div class="grid grid--cols-2" >
-        {{ movies_html }}
-      </div>
+      <span class="label label--inverted">Top Movies (30 days)</span>
+      {{ movies_html }}
+    </div>
+    <div class="column">
+            <span class="label label--inverted">Top TV Shows (30 days)</span>
+      {{ tv_html }}
     </div>
   </div>
 </div>
