@@ -62,6 +62,22 @@ def parse_play_data(response_data):
 #     print(poster_url)
 
 
+def get_plays_graph_data():
+    request = get_tautilli_endpoint(
+        "get_plays_by_date", [("time_range", "30"), ("y_axis", "plays")]
+    )
+    graph_data = requests.get(request).json()["response"]["data"]
+    result = []
+    for i, date in enumerate(graph_data["categories"]):
+        row = [date] + [series["data"][i] for series in graph_data["series"]]
+        result.append(row)
+    summed_without_music = [
+        [date, series_data[0] + series_data[1]] for date, *series_data in result
+    ]
+    pprint(summed_without_music)
+    return summed_without_music
+
+
 def get_stats():
     movies_url = get_tautilli_endpoint(
         "get_home_stats",
@@ -84,7 +100,6 @@ def get_stats():
         ],
     )
     result_json = requests.get(tv_url).json()["response"]["data"]
-    pprint(result_json)
     tv_data = parse_play_data(result_json)
     return (movie_data, tv_data)
 
@@ -133,6 +148,7 @@ def main():
     movie_data, tv_data = get_stats()
     movie_html = build_data_html(movie_data)
     tv_html = build_data_html(tv_data)
+    play_data = get_plays_graph_data()
 
     try:
         variables = {
@@ -140,6 +156,7 @@ def main():
                 "server_name": str(server_name),
                 "movies_html": movie_html,
                 "tv_html": tv_html,
+                "graph_data": str(play_data),
             }
         }
         result = requests.post(url, json=variables)
@@ -150,3 +167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    get_plays_graph_data()

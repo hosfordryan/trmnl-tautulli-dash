@@ -1,18 +1,92 @@
-<div class="layout">
+<!-- import Highcharts + Chartkick libraries -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartkick@5.0.1/dist/chartkick.min.js"></script>
+
+<div class="layout layout--top">
   <div class="columns">
     <div class="column">
       <span class="label label--inverted">Top Movies (30 days)</span>
       {{ movies_html }}
     </div>
     <div class="column">
-            <span class="label label--inverted">Top TV Shows (30 days)</span>
+      <span class="label label--inverted">Top TV Shows (30 days)</span>
       {{ tv_html }}
     </div>
   </div>
 </div>
+<div class="layout layout--col">
+  <span class="label label--inverted">Play Count By Day</span>
+  <div id="chart-123" style="width: 100%"></div>
+</div>
+
 
 <div class="title_bar">
   <img class="image" src="https://i.ibb.co/1TV4KSd/PlexLogo.jpg">
   <span class="title">Plex Metrics</span>
   <span class="instance">{{ server_name }}</span>
 </div>
+
+<script type="text/javascript">
+  var data = {{ graph_data }};
+
+  // recommended configs to achieve the TRMNL Framework aesthetic
+  var createChart = function() {
+    new Chartkick["LineChart"](
+      "chart-123",
+      data,
+      {
+        adapter: "highcharts", // chartjs, google, etc available
+        prefix: "",
+        thousands: ",",
+        points: false,
+        colors: ["black"],
+        curve: true,
+        library: {
+          chart: {
+            height: 150
+          },
+          plotOptions: {
+            series: {
+              animation: false,
+              lineWidth: 4
+            }
+          },
+          yAxis: {
+            labels: {
+              style: {
+                fontSize: "16px",
+                color:"#000000"
+              }
+            },
+            gridLineDashStyle: "shortdot",
+            gridLineWidth: 1,
+            gridLineColor: "#000000",
+            tickAmount: 5
+          },
+          xAxis: {
+            type: "daytime",
+            labels: {
+              style: {
+                fontSize: "16px",
+                color: "#000000"
+              }
+            },
+            lineWidth: 0,
+            gridLineDashStyle: "dot",
+            tickWidth: 1,
+            tickLength: 0,
+            gridLineWidth: 1,
+            gridLineColor: "#000000",
+            tickPixelInterval: 120
+          }
+        }
+      });
+  };
+
+  // ensure your chart loads before plugin render is generated
+  if ("Chartkick" in window) {
+    createChart();
+  } else {
+    window.addEventListener("chartkick:load", createChart, true);
+  }
+</script>
