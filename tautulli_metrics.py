@@ -1,7 +1,6 @@
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from pprint import pprint
 
 
 def get_tautilli_endpoint(command: str, args: list):
@@ -77,7 +76,6 @@ def get_plays_graph_data():
     summed_without_music = [
         [date, series_data[0] + series_data[1]] for date, *series_data in result
     ]
-    pprint(summed_without_music)
     return summed_without_music
 
 
