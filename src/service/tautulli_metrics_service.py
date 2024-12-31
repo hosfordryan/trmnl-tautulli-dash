@@ -46,15 +46,17 @@ class TautulliMetricsService:
     def get_data(self):
         try:
             if self._is_cache_valid():
+                logger.info("Cache is valid. Returned cached data")
                 return self._cached_data
 
             data = self._fetch_data()
 
             self._update_cache(data)
             self.last_update = datetime.now(UTC)
+            return data
 
         except Exception as e:
-            logger.error(f"Error fetching data: {str(e)}")
+            logger.error(f"Error fetching data: {str(e)}", e)
 
     def _fetch_data(self):
         server_name = get_server_name()
@@ -62,6 +64,7 @@ class TautulliMetricsService:
         movie_html = self.build_data_html(movie_data)
         tv_html = self.build_data_html(tv_data)
         play_data = get_plays_graph_data()
+        logger.info("Got all data.")
         return {
             "server_name": server_name,
             "movie_html": movie_html,

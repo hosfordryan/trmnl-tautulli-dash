@@ -53,6 +53,12 @@ def get_plays_graph_data():
 def get_server_name():
     logger.info(f"Request: {get_tautilli_endpoint('get_server_friendly_name', [])}")
     result = requests.get(get_tautilli_endpoint("get_server_friendly_name", [])).json()
+    # TODO: Pull out this error handling to be used by every API call
+    if result["response"]["result"] == "error":
+        logger.error(
+            f"Failed getting server name with error message: {result['response']['message']}"
+        )
+    logger.info(f"get_server_name response: {result}")
     name = result["response"]["data"]
     return name
 
