@@ -7,8 +7,8 @@ load_dotenv()
 
 # Config for the project
 class Config:
-    HOST_IP = os.getenv("HOST", "0.0.0.0")
-    HOST_PORT = int(os.getenv("PORT", 3113))
+    HOST_IP = os.getenv("HOST_IP", "0.0.0.0")
+    HOST_PORT = int(os.getenv("HOST_PORT", 3113))
 
     TAUTULLI_IP = os.getenv("TAUTULLI_IP", "0.0.0.0")
     TAUTULLI_PORT = os.getenv("PORT", "8181")
