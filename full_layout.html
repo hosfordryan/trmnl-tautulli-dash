@@ -6,7 +6,7 @@
   <div class="columns">
     <div class="column">
       <span class="label label--inverted">Top Movies (30 days)</span>
-      {{ movies_html }}
+      {{ movie_html }}
     </div>
     <div class="column">
       <span class="label label--inverted">Top TV Shows (30 days)</span>
@@ -27,7 +27,11 @@
 </div>
 
 <script type="text/javascript">
-  var data = {{ graph_data }};
+  const data = [
+    {% for item in play_data %}
+    ["{{ item[0] }}", {{ item[1] }}]{% if forloop.last == false %},{% endif %}
+    {% endfor %}
+  ];
 
   // recommended configs to achieve the TRMNL Framework aesthetic
   var createChart = function() {
@@ -53,10 +57,10 @@
           },
           yAxis: {
             title: {
-              text: "Hours",
+              text: "Hours", // Add the Y-axis label here
               style: {
-                fontSize: "16px",
-                color: "#000000"
+                fontSize: "16px", // Optional: Customize the font size
+                color: "#000000"  // Optional: Customize the color
               }
             },
             labels: {
@@ -71,8 +75,12 @@
             tickAmount: 5
           },
           xAxis: {
-            type: "daytime",
+            type: "datetime",
             labels: {
+              formatter: function() {
+                const date = new Date(this.value);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+              },
               style: {
                 fontSize: "16px",
                 color: "#000000"
@@ -84,8 +92,7 @@
             tickLength: 0,
             gridLineWidth: 1,
             gridLineColor: "#000000",
-            tickPixelInterval: 120,
-            tickInterval: 2,
+            tickPixelInterval: 100
           }
         }
       });
