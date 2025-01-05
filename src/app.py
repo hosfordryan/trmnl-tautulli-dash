@@ -1,6 +1,7 @@
 import logging
 import traceback
 import webbrowser
+from pprint import pprint
 from flask import Flask, Response, jsonify
 from flask_cors import CORS
 from threading import Timer
@@ -50,13 +51,9 @@ def trmnl_webhook():
         data = tautulli_metrics_service.get_data()
         logger.info(f"Data retrieved: {data}")
 
-        return Response(
-            data,
-            headers={
-                "X-TRMNL-Refresh": str(Config.REFRESH_INTERVAL),
-                "X-TRMNL-Plugin-UUID": Config.TRMNL_PLUGIN_UUID,
-            },
-        )
+        assert Config.TRMNL_PLUGIN_UUID is not None
+        return jsonify(data)
+
     except Exception as e:
         logger.error(f"Webhook error: {str(e)}")
         logger.error(traceback.format_exc())

@@ -58,7 +58,6 @@ def get_server_name():
         logger.error(
             f"Failed getting server name with error message: {result['response']['message']}"
         )
-    logger.info(f"get_server_name response: {result}")
     name = result["response"]["data"]
     return name
 
