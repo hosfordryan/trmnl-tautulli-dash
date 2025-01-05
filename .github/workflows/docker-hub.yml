@@ -19,7 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set repository name
-        run: echo "IMAGE_NAME=${{ github.repository }}" | cut -d'/' -f2 >> $GITHUB_ENV
+        run: |
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          echo "IMAGE_NAME=${REPO_NAME}" >> $GITHUB_ENV
       - name: Verify extracted repo name
         run: echo "Repository name is $IMAGE_NAME"
       - name: Login to Docker Hub
@@ -38,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
