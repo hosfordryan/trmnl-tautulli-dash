@@ -2,7 +2,7 @@ import logging
 import traceback
 import webbrowser
 from pprint import pprint
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
 from threading import Timer
 
@@ -47,17 +47,24 @@ def home():
 
 @app.route("/webhook", methods=["GET"])
 def trmnl_webhook():
-    try:
-        data = tautulli_metrics_service.get_data()
-        logger.info(f"Data retrieved: {data}")
+    headers = request.headers
+    logger.info("Got headers: ", headers)
+    auth_header = headers.get("authorization")
+    if auth_header == Config.AUTH_KEY:
+        try:
+            data = tautulli_metrics_service.get_data()
+            logger.info(f"Data retrieved: {data}")
 
-        assert Config.TRMNL_PLUGIN_UUID is not None
-        return jsonify(data)
+            assert Config.TRMNL_PLUGIN_UUID is not None
+            return jsonify(data)
 
-    except Exception as e:
-        logger.error(f"Webhook error: {str(e)}")
-        logger.error(traceback.format_exc())
-        return Response({"success": "false"})
+        except Exception as e:
+            logger.error(f"Webhook error: {str(e)}")
+            logger.error(traceback.format_exc())
+            return Response({"success": "false"})
+    else:
+        logger.info(f"Request missing proper auth key")
+        return jsonify({"success": False}), 401
 
 
 if __name__ == "__main__":
