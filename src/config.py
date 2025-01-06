@@ -18,6 +18,8 @@ class Config:
     REFRESH_INTERVAL = int(os.getenv("REFRESH_INTERVAL", 900))
     CACHE_TIMEOUT_SEC = 3600  # 1 hour
 
+    AUTH_KEY = os.getenv("AUTH_KEY")
+
     # TRMNL config
     TRMNL_API_KEY = os.getenv("TRMNL_API_KEY")
     TRMNL_PLUGIN_UUID = os.getenv("TRMNL_PLUGIN_UUID")
@@ -25,7 +27,12 @@ class Config:
     @classmethod
     def validate(cls):
         # Validate required config
-        required_keys = ["TRMNL_API_KEY", "TRMNL_PLUGIN_UUID", "TAUTULLI_API_KEY"]
+        required_keys = [
+            "TRMNL_API_KEY",
+            "TRMNL_PLUGIN_UUID",
+            "TAUTULLI_API_KEY",
+            "AUTH_KEY",
+        ]
 
         missing_keys = [key for key in required_keys if not getattr(cls, key)]
         if missing_keys:
