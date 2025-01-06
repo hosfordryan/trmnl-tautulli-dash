@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import tz
 import logging
 from zoneinfo import ZoneInfo
 import requests
@@ -74,9 +75,9 @@ def parse_play_data(response_data):
                 "title": title,
                 "year": str(year),
                 "plays": str(plays),
-                "last_play": datetime.fromtimestamp(
-                    int(last_play), tz=ZoneInfo("UTC")
-                ).strftime("%Y-%m-%d %I:%M %p"),
+                "last_play": datetime.fromtimestamp(int(last_play), tz=ZoneInfo("UTC"))
+                .astimezone(tz.gettz("America/Denver"))
+                .strftime("%Y-%m-%d %I:%M %p"),
                 "rating_key": str(row["rating_key"]),
             }
         )
